@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Set Shortcut</title>
+</head>
+
+<body>
+    <div>
+        <input id="hotkey" onkeyup="keyUp(event)" />
+        <input type="button" id="save" onclick="saveHotkey()" value="save" />
+    </div>
+    <script>
+        const {
+            ipcRenderer
+        } = require('electron');
+        const remote = require('electron').remote;
+
+        window.addEventListener('load', (event) => {
+            ipcRenderer.on('set-hotkey-reply', (event, isOk, arg) => {
+                if (isOk) {
+                    window.localStorage.setItem('shortKey', arg);
+                    console.log('=============== saved :', arg);
+                }
+                var w = remote.getCurrentWindow();
+                w.close();
+            });
+
+            loadHotkey();
+        });
+
+        async function loadHotkey() {
+            let shortKey = window.localStorage.shortKey;
+            console.log("========load hotkey:", shortKey);
+            if (!shortKey) shortKey = 'Control+Alt+D';
+            document.getElementById("hotkey").value = shortKey;
+        }
+
+        function saveHotkey() {
+            const hotkey = document.getElementById("hotkey").value;
+            ipcRenderer.send('set-hotkey', hotkey);
+            //console.log(hotkey, "key pressed");
+        }
+
+        function keyUp(event) {
+            const keyCode = event.keyCode;
+            const key = event.key;
+            const charCode = event.code;
+
+            if ((keyCode >= 16 && keyCode <= 18) || keyCode === 91) return;
+
+            const value = [];
+            event.ctrlKey ? value.push("Control") : null;
+            event.shiftKey ? value.push("Shift") : null;
+            event.isAlt ? value.push("Alt") : null;
+            value.push(key.toUpperCase());
+
+            document.getElementById("hotkey").value = value.join("+");
+        }
+    </script>
+</body>
+
+</html>

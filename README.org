@@ -1,0 +1,40 @@
+* About
+  A client for [[https://www.deepl.com/translator][deepl]] in Linux, using [[https://www.electronjs.org/][Electron]].
+
+  Tested under ubuntu 20.04 only.
+
+  [[./demo.png]]
+
+* How to use
+
+  Clone this repo and build it, or just simply download prebuilt binary from [[https://github.com/kumakichi/Deepl-linux-electron/releases][Release Page]]
+
+  Open deepl-linux-electron, select text in any application, then use shortcut *Control+Alt+D* to translate
+
+  You can change this shortcut in the program menu: Settings -> Shortcut
+
+* How to build
+
+** install yarn
+
+   #+BEGIN_SRC sh
+     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+     sudo apt update && sudo apt install yarn
+   #+END_SRC
+
+** install dependencies
+
+   #+BEGIN_SRC sh
+     yarn
+   #+END_SRC
+
+** build or debug
+
+   #+BEGIN_SRC sh
+     # for dev
+     yarn dev
+
+     # for build
+     yarn dist:dir # generated file : dist/linux-unpacked/deepl-linux-electron 
+   #+END_SRC
