@@ -1,0 +1,26 @@
+{
+  "devDependencies": {
+    "electron": "^11.2.1",
+    "electron-builder": "^22.9.1",
+    "electron-webpack": "^2.8.2",
+    "webpack": "^4.46.0"
+  },
+  "name": "Deepl-Linux-Electron",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "dist": "yarn compile && electron-builder",
+    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null"
+  },
+  "electronWebpack": {
+    "renderer": {
+      "template": "src/renderer/index.html"
+    }
+  },
+  "license": "MIT",
+  "dependencies": {
+    "electron-store": "^7.0.1",
+    "source-map-support": "^0.5.19"
+  }
+}
