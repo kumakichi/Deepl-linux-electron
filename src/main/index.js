@@ -15,9 +15,11 @@ const {
     globalShortcut,
     ipcMain,
     Menu,
-    shell
+    shell,
+    Tray
 } = require('electron');
 var win = null;
+var appQuitting = false;
 
 app.setAboutPanelOptions({
     applicationName: 'Deepl-Linux-Electron',
@@ -72,6 +74,20 @@ app.on('ready', function() {
     let menu = Menu.buildFromTemplate(templateArr);
     Menu.setApplicationMenu(menu);
 
+    tray = new Tray('tray-icon.png')
+    const contextMenu = Menu.buildFromTemplate([
+        { 
+            label: 'Quit',
+            click() {
+                console.log("Clicked")
+                appQuitting = true
+                app.quit()
+            }
+        }
+    ])
+    tray.setToolTip('Deepl-Linux-Electron')
+    tray.setContextMenu(contextMenu)
+
     let ss = store.get('short_key');
     if (!ss) {
         console.log("========>not found, fill with default");
@@ -93,17 +109,16 @@ app.on('ready', function() {
     win.loadURL("https://www.deepl.com/translator", {
         userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36'
     });
-    win.on('closed', function() {
-        win = null
+    win.on('close', function (evt) {
+        if (!appQuitting) {
+            evt.preventDefault();
+            win.hide();
+        }
     });
 })
 
 app.on('will-quit', () => {
     globalShortcut.unregister(gShortcut);
-});
-
-app.on('window-all-closed', function() {
-    app.quit();
 });
 
 ipcMain.on('set-hotkey', (event, arg) => {
