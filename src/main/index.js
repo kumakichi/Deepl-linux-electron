@@ -79,7 +79,6 @@ app.on('ready', function() {
         { 
             label: 'Quit',
             click() {
-                console.log("Clicked")
                 appQuitting = true
                 app.quit()
             }
