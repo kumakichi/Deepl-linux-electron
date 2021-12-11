@@ -16,6 +16,7 @@ const {
     ipcMain,
     Menu,
     shell,
+    nativeImage,
     Tray
 } = require('electron');
 var win = null;
@@ -74,7 +75,7 @@ app.on('ready', function() {
     let menu = Menu.buildFromTemplate(templateArr);
     Menu.setApplicationMenu(menu);
 
-    tray = new Tray('tray-icon.png')
+    tray = new Tray(nativeImage.createFromPath(path.join(__static,'tray-icon.png')))
     const contextMenu = Menu.buildFromTemplate([
         { 
             label: 'Quit',
