@@ -15,7 +15,8 @@ const inputValue = (dom, st) => {
 }
 
 ipcRenderer.on('translateClipboard', function() {
-    inputValue(document.querySelector('.lmt__source_textarea'), clipboard.readText());
+    inputValue(document.querySelector('d-textarea'), clipboard.readText());
+
 });
 
 window.addEventListener('load', (event) => {
