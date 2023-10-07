@@ -4,6 +4,8 @@ let path = require('path');
 
 let gShortcut;
 
+let isRemoveLineBreaks = false;
+
 const Store = require('electron-store');
 const store = new Store();
 
@@ -48,6 +50,14 @@ app.on('ready', function() {
                 //                        hotkeySettingsWindow.webContents.openDevTools();
 
                 hotkeySettingsWindow.loadFile(path.join(__static, 'hotkey.html'))
+            }
+        }, {
+            label: "Remove Line Breaks",
+            type: "checkbox",
+            checked: false,
+            click: (item) => {
+                isRemoveLineBreaks = item.checked;
+                win.webContents.send('translateClipboard', item.checked);
             }
         }, {
             label: "Quit",
@@ -134,7 +144,7 @@ ipcMain.on('set-hotkey', (event, arg) => {
 
 function registerShortcut(newShortcut, oldShortcut) {
     let shortcut = globalShortcut.register(newShortcut, () => {
-        win.webContents.send('translateClipboard');
+        win.webContents.send('translateClipboard', isRemoveLineBreaks);
         win.show()
     });
 

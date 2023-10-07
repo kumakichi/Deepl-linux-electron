@@ -14,9 +14,8 @@ const inputValue = (dom, st) => {
     dom.dispatchEvent(evt);
 }
 
-ipcRenderer.on('translateClipboard', function() {
-    inputValue(document.querySelector('d-textarea'), clipboard.readText());
-
+ipcRenderer.on('translateClipboard', (event, isChecked) => {
+    inputValue(document.querySelector('d-textarea'), (isChecked) ? clipboard.readText().split("\n").join(" ") : clipboard.readText());
 });
 
 window.addEventListener('load', (event) => {
