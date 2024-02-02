@@ -33,6 +33,7 @@ app.setAboutPanelOptions({
 
 app.on('ready', function() {
     let Menu = require('electron').Menu;
+    isRemoveLineBreaks = store.get('remove_line_breaks');
     let templateArr = [{
         label: "Settings",
         submenu: [{
@@ -54,9 +55,10 @@ app.on('ready', function() {
         }, {
             label: "Remove Line Breaks",
             type: "checkbox",
-            checked: false,
+            checked: isRemoveLineBreaks,
             click: (item) => {
                 isRemoveLineBreaks = item.checked;
+                store.set('remove_line_breaks', isRemoveLineBreaks);
                 win.webContents.send('translateClipboard', item.checked);
             }
         }, {
