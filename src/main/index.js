@@ -1,6 +1,7 @@
 let url = '';
 let URL = require('url');
 let path = require('path');
+let fs = require('fs')
 
 let gShortcut;
 
@@ -23,11 +24,12 @@ const {
 } = require('electron');
 var win = null;
 var appQuitting = false;
+const appName = 'Deepl-Linux-Electron';
 
 app.setAboutPanelOptions({
-    applicationName: 'Deepl-Linux-Electron',
+    applicationName: appName,
     applicationVersion: app.getVersion(),
-    copyright: '© 2021 kumakichi'
+    copyright: '© 2021-2024 kumakichi'
 })
 
 
@@ -127,6 +129,21 @@ app.on('ready', function() {
             win.hide();
         }
     });
+  win.webContents.on('did-finish-load', () => {
+    const appConfigPath = path.join(app.getPath('appData'), appName);
+    const cssPath = path.join(appConfigPath, 'user_theme.css');
+    fs.readFile(cssPath, 'utf8', (err, data) => {
+      if (err) {
+        console.error('Error reading CSS file:', err)
+        return
+      }
+      if (data.length == 0) {
+        return
+      }
+      console.log('reading CSS file length:', data.length)
+      win.webContents.insertCSS(data)
+    })
+  })
 })
 
 app.on('will-quit', () => {

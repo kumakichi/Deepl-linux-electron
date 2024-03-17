@@ -7,11 +7,28 @@
 
 * How to use
 
-  Clone this repo and build it, or just simply download prebuilt binary from [[https://github.com/kumakichi/Deepl-linux-electron/releases][Release Page]]
+** get binary
+  Clone this repo and build it, or just simply download the prebuilt binary from [[https://github.com/kumakichi/Deepl-linux-electron/releases][Release Page]]
 
+** use it
   Open deepl-linux-electron, select text in any application, press Ctrl+c to copy selected content into clipboard, then use shortcut *Control+Alt+D* to translate
 
+** set shortcut
   You can change this shortcut on the program menu: Settings -> Shortcut 
+
+** user-defined css
+  Support user-defined css, just put your css code into
+  #+begin_quote
+  ~/.config/Deepl-Linux-Electron/user_theme.css
+  #+end_quote
+
+  a simple *dark mode* implementation, thanks to [[https://userstyles.world/user/NotJ3st3r][NotJ3st3r]]:
+  #+begin_src css
+    html {
+      filter: invert(90%) hue-rotate(180deg) brightness(110%) contrast(110%);
+      background: white;
+    }
+  #+end_src
 
 * How to build
 
