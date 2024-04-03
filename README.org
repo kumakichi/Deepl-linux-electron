@@ -14,7 +14,7 @@
   Open deepl-linux-electron, select text in any application, press Ctrl+c to copy selected content into clipboard, then use shortcut *Control+Alt+D* to translate
 
 ** set shortcut
-  You can change this shortcut on the program menu: Settings -> Shortcut 
+  You can change this shortcut on the program menu: Settings -> Shortcut
 
 ** user-defined css
   Support user-defined css, just put your css code into
@@ -53,5 +53,20 @@
      yarn dev
 
      # for build
-     yarn dist:dir # generated file : dist/linux-unpacked/deepl-linux-electron 
+     yarn dist:dir # generated file : dist/linux-unpacked/deepl-linux-electron
    #+END_SRC
+
+** build in docker
+   #+BEGIN_SRC sh
+     # run docker in repo dir
+     docker run -it --rm --name deepl-linux -v $(pwd):/app -w /app --entrypoint /bin/bash node:18
+
+     # build
+     yarn install
+     yarn dist
+   #+END_SRC
+
+** run on linux
+  Deepl may not start with the error `FATAL:gpu_data_manager_impl_private.cc(445)] GPU process isn't usable. Goodbye.`
+
+  If you encounter this, try running `deepl --in-process-gpu`.
