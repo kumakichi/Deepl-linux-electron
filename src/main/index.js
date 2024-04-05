@@ -6,6 +6,7 @@ let fs = require('fs')
 let gShortcut;
 
 let isRemoveLineBreaks = false;
+let isHiddenOnStartup = false;
 
 const Store = require('electron-store');
 const store = new Store();
@@ -36,6 +37,7 @@ app.setAboutPanelOptions({
 app.on('ready', function() {
     let Menu = require('electron').Menu;
     isRemoveLineBreaks = store.get('remove_line_breaks');
+    isHiddenOnStartup = store.get('hidden_on_startup');
     let templateArr = [{
         label: "Settings",
         submenu: [{
@@ -62,6 +64,14 @@ app.on('ready', function() {
                 isRemoveLineBreaks = item.checked;
                 store.set('remove_line_breaks', isRemoveLineBreaks);
                 win.webContents.send('translateClipboard', item.checked);
+            }
+        }, {
+            label: "Hidden on startup",
+            type: "checkbox",
+            checked: isHiddenOnStartup,
+            click: (item) => {
+                isHiddenOnStartup = item.checked;
+                store.set('hidden_on_startup', isHiddenOnStartup);
             }
         }, {
             label: "Quit",
@@ -117,7 +127,8 @@ app.on('ready', function() {
         height: 600,
         webPreferences: {
             preload: path.join(__static, 'preload.js')
-        }
+        },
+        show: !isHiddenOnStartup
     });
 
     win.loadURL("https://www.deepl.com/translator", {
