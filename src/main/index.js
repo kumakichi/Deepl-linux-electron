@@ -100,7 +100,7 @@ app.on('ready', function() {
         submenu: [{
             label: "Learn More",
             click: async () => {
-                await shell.openExternal('https://github.com/kumakichi/Deepl-linux')
+                await shell.openExternal('https://github.com/kumakichi/Deepl-linux-electron')
             }
         }, {
             label: "About",
