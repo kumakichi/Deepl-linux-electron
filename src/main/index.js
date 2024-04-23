@@ -7,8 +7,8 @@ let gShortcut;
 
 let isRemoveLineBreaks = false;
 let isHiddenOnStartup = false;
-let windowWidth = 800;
-let windowHeight = 600;
+let windowWidth;
+let windowHeight;
 
 const Store = require('electron-store');
 const store = new Store();
@@ -150,7 +150,9 @@ app.on('ready', function() {
     });
 
     console.log("============ restore window size:", windowWidth, 'x', windowHeight)
-    win.setSize(parseInt(windowWidth,10), parseInt(windowHeight,10), false)
+    if (windowWidth && windowHeight) {
+        win.setSize(parseInt(windowWidth,10), parseInt(windowHeight,10), false)
+    }
 
     win.loadURL("https://www.deepl.com/translator", {
         userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36'
