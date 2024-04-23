@@ -7,6 +7,8 @@ let gShortcut;
 
 let isRemoveLineBreaks = false;
 let isHiddenOnStartup = false;
+let windowWidth = 800;
+let windowHeight = 600;
 
 const Store = require('electron-store');
 const store = new Store();
@@ -38,6 +40,8 @@ app.on('ready', function() {
     let Menu = require('electron').Menu;
     isRemoveLineBreaks = store.get('remove_line_breaks');
     isHiddenOnStartup = store.get('hidden_on_startup');
+    windowWidth = store.get('window_width');
+    windowHeight = store.get('window_height');
     let templateArr = [{
         label: "Settings",
         submenu: [{
@@ -56,6 +60,20 @@ app.on('ready', function() {
 
                 hotkeySettingsWindow.loadFile(path.join(__static, 'hotkey.html'))
             }
+        }, {
+          label: "Window size",
+          click: () => {
+              const settingsWindowSize = new BrowserWindow({
+                  frame: false,
+                  height: 125,
+                  width: 200,
+                  webPreferences: {
+                      nodeIntegration: true,
+                      enableRemoteModule: true
+                  }
+              })
+              settingsWindowSize.loadFile(path.join(__static, 'window-size.html'))
+          }
         }, {
             label: "Remove Line Breaks",
             type: "checkbox",
@@ -82,7 +100,7 @@ app.on('ready', function() {
         submenu: [{
             label: "Learn More",
             click: async () => {
-                await shell.openExternal('https://github.com/kumakichi/Deepl-linux')
+                await shell.openExternal('https://github.com/kumakichi/Deepl-linux-electron')
             }
         }, {
             label: "About",
@@ -101,7 +119,7 @@ app.on('ready', function() {
 
     tray = new Tray(nativeImage.createFromPath(path.join(__static,'tray-icon.png')))
     const contextMenu = Menu.buildFromTemplate([
-        { 
+        {
             label: 'Quit',
             click() {
                 appQuitting = true
@@ -131,6 +149,9 @@ app.on('ready', function() {
         show: !isHiddenOnStartup
     });
 
+    console.log("============ restore window size:", windowWidth, 'x', windowHeight)
+    win.setSize(parseInt(windowWidth,10), parseInt(windowHeight,10), false)
+
     win.loadURL("https://www.deepl.com/translator", {
         userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36'
     });
@@ -140,21 +161,22 @@ app.on('ready', function() {
             win.hide();
         }
     });
-  win.webContents.on('did-finish-load', () => {
-    const appConfigPath = path.join(app.getPath('appData'), appName);
-    const cssPath = path.join(appConfigPath, 'user_theme.css');
-    fs.readFile(cssPath, 'utf8', (err, data) => {
-      if (err) {
-        console.error('Error reading CSS file:', err)
-        return
-      }
-      if (data.length == 0) {
-        return
-      }
-      console.log('reading CSS file length:', data.length)
-      win.webContents.insertCSS(data)
+
+    win.webContents.on('did-finish-load', () => {
+      const appConfigPath = path.join(app.getPath('appData'), appName);
+      const cssPath = path.join(appConfigPath, 'user_theme.css');
+      fs.readFile(cssPath, 'utf8', (err, data) => {
+        if (err) {
+          console.error('Error reading CSS file:', err)
+          return
+        }
+        if (data.length == 0) {
+          return
+        }
+        console.log('reading CSS file length:', data.length)
+        win.webContents.insertCSS(data)
+      })
     })
-  })
 })
 
 app.on('will-quit', () => {
@@ -170,6 +192,15 @@ ipcMain.on('set-hotkey', (event, arg) => {
 
     store.set('short_key', arg);
     event.reply('set-hotkey-reply', true, arg);
+})
+
+ipcMain.on('set-window-size', (event, argWidth, argHeight) => {
+    console.log("========got new window size :", argWidth, 'x', argHeight)
+
+    store.set('window_width', argWidth);
+    store.set('window_height', argHeight);
+    event.reply('set-window-size-reply', true, argWidth, argHeight);
+    win.setSize(parseInt(argWidth,10),parseInt(argHeight,10),true)
 })
 
 function registerShortcut(newShortcut, oldShortcut) {
