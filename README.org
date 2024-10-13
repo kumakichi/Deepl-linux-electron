@@ -52,6 +52,9 @@
      # for dev
      yarn dev
 
+     # for ubuntu 24.04 dev
+     yarn dev --no-sandbox
+
      # for build
      yarn dist:dir # generated file : dist/linux-unpacked/deepl-linux-electron
    #+END_SRC
@@ -67,6 +70,33 @@
    #+END_SRC
 
 ** run on linux
-  Deepl may not start with the error `FATAL:gpu_data_manager_impl_private.cc(445)] GPU process isn't usable. Goodbye.`
+  Deepl may not start with the error
+  #+begin_quote
+  FATAL:gpu_data_manager_impl_private.cc(445)] GPU process isn't usable. Goodbye.
+  #+end_quote
 
-  If you encounter this, try running `deepl --in-process-gpu`.
+  If you encounter this, try running
+  #+begin_src sh
+    deepl --in-process-gpu
+  #+end_src
+
+* Troubleshooting
+
+** ubuntu 24.04 core dump
+
+   Error message likes:
+   #+begin_quote
+   The SUID sandbox helper binary was found, but is not configured correctly. Rather than run without sandboxing I'm aborting now. You need to make sure that /dev/shm/tmpdir/.mount_Deepl-iCQgY6/chrome-sandbox is owned by root and has mode 4755.
+   #+end_quote
+
+   just run with parameter:
+   #+begin_src sh
+     ./Deepl-Linux-Electron-1.5.0.AppImage --no-sandbox
+   #+end_src
+
+   see:
+   [[https://github.com/kumakichi/Deepl-linux-electron/issues/21][Doesnt' work with Kubuntu 24.4]]
+
+   [[https://github.com/electron/electron/issues/42510][Bug: The SUID sandbox helper binary was found, but is not configured correctly. Rather than run without sandboxing I'm aborting now.]]
+
+   [[https://askubuntu.com/questions/1512287/obsidian-appimage-the-suid-sandbox-helper-binary-was-found-but-is-not-configu][Obsidian AppImage - The SUID sandbox helper binary was found, but is not configured correctly]]
