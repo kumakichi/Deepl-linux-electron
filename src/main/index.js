@@ -23,7 +23,8 @@ const {
     Menu,
     shell,
     nativeImage,
-    Tray
+    Tray,
+    clipboard
 } = require('electron');
 var win = null;
 var appQuitting = false;
@@ -53,7 +54,7 @@ app.on('ready', function() {
                     width: 280,
                     webPreferences: {
                         nodeIntegration: true,
-                        enableRemoteModule: true // renderer的remote需要这个: https://github.com/electron/electron/issues/16558#issuecomment-703143446
+                        enableRemoteModule: true // https://github.com/electron/electron/issues/16558#issuecomment-703143446
                     }
                 })
                 //                        hotkeySettingsWindow.webContents.openDevTools();
@@ -61,19 +62,19 @@ app.on('ready', function() {
                 hotkeySettingsWindow.loadFile(path.join(__static, 'hotkey.html'))
             }
         }, {
-          label: "Window size",
-          click: () => {
-              const settingsWindowSize = new BrowserWindow({
-                  frame: false,
-                  height: 125,
-                  width: 200,
-                  webPreferences: {
-                      nodeIntegration: true,
-                      enableRemoteModule: true
-                  }
-              })
-              settingsWindowSize.loadFile(path.join(__static, 'window-size.html'))
-          }
+            label: "Window size",
+            click: () => {
+                const settingsWindowSize = new BrowserWindow({
+                    frame: false,
+                    height: 125,
+                    width: 200,
+                    webPreferences: {
+                        nodeIntegration: true,
+                        enableRemoteModule: true
+                    }
+                })
+                settingsWindowSize.loadFile(path.join(__static, 'window-size.html'))
+            }
         }, {
             label: "Remove Line Breaks",
             type: "checkbox",
@@ -81,7 +82,8 @@ app.on('ready', function() {
             click: (item) => {
                 isRemoveLineBreaks = item.checked;
                 store.set('remove_line_breaks', isRemoveLineBreaks);
-                win.webContents.send('translateClipboard', item.checked);
+                //win.webContents.send('translateClipboard', item.checked);
+                translateClipboard(item.checked);
             }
         }, {
             label: "Hidden on startup",
@@ -117,16 +119,14 @@ app.on('ready', function() {
     let menu = Menu.buildFromTemplate(templateArr);
     Menu.setApplicationMenu(menu);
 
-    tray = new Tray(nativeImage.createFromPath(path.join(__static,'tray-icon.png')))
-    const contextMenu = Menu.buildFromTemplate([
-        {
-            label: 'Quit',
-            click() {
-                appQuitting = true
-                app.quit()
-            }
+    tray = new Tray(nativeImage.createFromPath(path.join(__static, 'tray-icon.png')))
+    const contextMenu = Menu.buildFromTemplate([{
+        label: 'Quit',
+        click() {
+            appQuitting = true
+            app.quit()
         }
-    ])
+    }])
     tray.setToolTip('Deepl-Linux-Electron')
     tray.setContextMenu(contextMenu)
 
@@ -143,21 +143,22 @@ app.on('ready', function() {
         title: "Deepl-Linux-Electron",
         width: 800,
         height: 600,
-        webPreferences: {
-            preload: path.join(__static, 'preload.js')
-        },
+        //webPreferences: {
+        //    preload: path.join(__static, 'preload.js')
+        //},
         show: !isHiddenOnStartup
     });
 
     console.log("============ restore window size:", windowWidth, 'x', windowHeight)
     if (windowWidth && windowHeight) {
-        win.setSize(parseInt(windowWidth,10), parseInt(windowHeight,10), false)
+        win.setSize(parseInt(windowWidth, 10), parseInt(windowHeight, 10), false)
     }
 
     win.loadURL("https://www.deepl.com/translator", {
-        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36'
+        userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'
     });
-    win.on('close', function (evt) {
+    //win.webContents.openDevTools();
+    win.on('close', function(evt) {
         if (!appQuitting) {
             evt.preventDefault();
             win.hide();
@@ -165,19 +166,19 @@ app.on('ready', function() {
     });
 
     win.webContents.on('did-finish-load', () => {
-      const appConfigPath = path.join(app.getPath('appData'), appName);
-      const cssPath = path.join(appConfigPath, 'user_theme.css');
-      fs.readFile(cssPath, 'utf8', (err, data) => {
-        if (err) {
-          console.error('Error reading CSS file:', err)
-          return
-        }
-        if (data.length == 0) {
-          return
-        }
-        console.log('reading CSS file length:', data.length)
-        win.webContents.insertCSS(data)
-      })
+        const appConfigPath = path.join(app.getPath('appData'), appName);
+        const cssPath = path.join(appConfigPath, 'user_theme.css');
+        fs.readFile(cssPath, 'utf8', (err, data) => {
+            if (err) {
+                console.error('Error reading CSS file:', err)
+                return
+            }
+            if (data.length == 0) {
+                return
+            }
+            console.log('reading CSS file length:', data.length)
+            win.webContents.insertCSS(data)
+        })
     })
 })
 
@@ -202,12 +203,13 @@ ipcMain.on('set-window-size', (event, argWidth, argHeight) => {
     store.set('window_width', argWidth);
     store.set('window_height', argHeight);
     event.reply('set-window-size-reply', true, argWidth, argHeight);
-    win.setSize(parseInt(argWidth,10),parseInt(argHeight,10),true)
+    win.setSize(parseInt(argWidth, 10), parseInt(argHeight, 10), true)
 })
 
 function registerShortcut(newShortcut, oldShortcut) {
     let shortcut = globalShortcut.register(newShortcut, () => {
-        win.webContents.send('translateClipboard', isRemoveLineBreaks);
+        //win.webContents.send('translateClipboard', isRemoveLineBreaks);
+        translateClipboard(isRemoveLineBreaks);
         win.show()
     });
 
@@ -230,4 +232,10 @@ function messageBox(type, title, message) {
         message: message,
         buttons: ["OK"]
     });
+}
+
+function translateClipboard(isChecked) {
+    let txt = (isChecked) ? clipboard.readText().split("\n").join(" ") : clipboard.readText();
+    win.webContents.executeJavaScript(`document.querySelector('d-textarea').value=\`` + txt + `\``);
+    win.webContents.executeJavaScript(`document.querySelector('d-textarea').dispatchEvent(new InputEvent('input', {inputType: 'insertFromPaste',data: \`` + txt + `\`}))`);
 }
