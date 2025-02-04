@@ -26,6 +26,7 @@ const {
     Tray,
     clipboard
 } = require('electron');
+require('@electron/remote/main').initialize();
 var win = null;
 var appQuitting = false;
 const appName = 'Deepl-Linux-Electron';
@@ -39,6 +40,7 @@ app.setAboutPanelOptions({
 
 app.on('ready', function() {
     let Menu = require('electron').Menu;
+    //console.log(app.getPath('userData'));
     isRemoveLineBreaks = store.get('remove_line_breaks');
     isHiddenOnStartup = store.get('hidden_on_startup');
     windowWidth = store.get('window_width');
@@ -54,10 +56,12 @@ app.on('ready', function() {
                     width: 280,
                     webPreferences: {
                         nodeIntegration: true,
-                        enableRemoteModule: true // https://github.com/electron/electron/issues/16558#issuecomment-703143446
+                        enableRemoteModule: true,
+                        preload: path.join(__static, 'hotkey.js')
                     }
                 })
-                //                        hotkeySettingsWindow.webContents.openDevTools();
+                //                                        hotkeySettingsWindow.webContents.openDevTools();
+                require('@electron/remote/main').enable(hotkeySettingsWindow.webContents)
 
                 hotkeySettingsWindow.loadFile(path.join(__static, 'hotkey.html'))
             }
@@ -70,9 +74,11 @@ app.on('ready', function() {
                     width: 200,
                     webPreferences: {
                         nodeIntegration: true,
-                        enableRemoteModule: true
+                        enableRemoteModule: true,
+                        preload: path.join(__static, 'window-size.js')
                     }
                 })
+                require('@electron/remote/main').enable(settingsWindowSize.webContents)
                 settingsWindowSize.loadFile(path.join(__static, 'window-size.html'))
             }
         }, {
@@ -143,9 +149,11 @@ app.on('ready', function() {
         title: "Deepl-Linux-Electron",
         width: 800,
         height: 600,
-        //webPreferences: {
-        //    preload: path.join(__static, 'preload.js')
-        //},
+        webPreferences: {
+            nodeIntegration: true,
+            enableRemoteModule: true
+            //preload: path.join(__static, 'preload.js')
+        },
         show: !isHiddenOnStartup
     });
 
