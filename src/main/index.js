@@ -139,7 +139,7 @@ app.on('ready', function() {
     let ss = store.get('short_key');
     if (!ss) {
         console.log("========>not found, fill with default");
-        store.set('short_key', 'Control+Alt+D');
+        store.set('short_key', 'Control+Alt+C');
     }
     gShortcut = store.get('short_key');
     console.log("============ use shortKey:", gShortcut);

@@ -20,7 +20,7 @@ window.addEventListener('load', (event) => {
 async function loadHotkey() {
     let shortKey = window.localStorage.shortKey;
     console.log("========load hotkey:", shortKey);
-    if (!shortKey) shortKey = 'Control+Alt+D';
+    if (!shortKey) shortKey = 'Control+Alt+C';
     document.getElementById("hotkey").value = shortKey;
 }
 
@@ -40,7 +40,8 @@ function keyUp(event) {
     const value = [];
     event.ctrlKey ? value.push("Control") : null;
     event.shiftKey ? value.push("Shift") : null;
-    event.isAlt ? value.push("Alt") : null;
+    event.altKey ? value.push("Alt") : null;
+    event.metaKey ? value.push("Meta") : null;
     value.push(key.toUpperCase());
 
     document.getElementById("hotkey").value = value.join("+");

@@ -8,7 +8,7 @@
     "webpack": "^4.47.0"
   },
   "name": "Deepl-Linux-Electron",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "scripts": {
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",

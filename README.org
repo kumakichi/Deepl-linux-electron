@@ -11,7 +11,7 @@
   Clone this repo and build it, or just simply download the prebuilt binary from [[https://github.com/kumakichi/Deepl-linux-electron/releases][Release Page]]
 
 ** use it
-  Open deepl-linux-electron, select text in any application, press Ctrl+c to copy selected content into clipboard, then use shortcut *Control+Alt+D* to translate
+  Open deepl-linux-electron, select text in any application, press Ctrl+c to copy selected content into clipboard, then use shortcut *Control+Alt+C* to translate
 
 ** set shortcut
   You can change this shortcut on the program menu: Settings -> Shortcut
