@@ -1,8 +1,9 @@
 {
+  "author": "kumakichi",
+  "description": "DeepL Integration for Linux",
   "devDependencies": {
-    "electron": "^32.2.0",
-    "electron-builder": "^25.1.8",
-    "electron-builder-squirrel-windows": "^25.1.8",
+    "electron": "^33.3.2",
+    "electron-builder": "^26.0.0",
     "electron-webpack": "^2.8.2",
     "webpack": "^4.47.0"
   },
@@ -24,5 +25,16 @@
     "@electron/remote": "^2.1.2",
     "electron-store": "^8.2.0",
     "source-map-support": "^0.5.19"
+  },
+  "build": {
+    "extraResources": [
+      {
+        "from": "node_modules/@electron/remote",
+        "to": "node_modules/@electron/remote",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
   }
 }

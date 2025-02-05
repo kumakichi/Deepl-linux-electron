@@ -34,7 +34,7 @@ const appName = 'Deepl-Linux-Electron';
 app.setAboutPanelOptions({
     applicationName: appName,
     applicationVersion: app.getVersion(),
-    copyright: '© 2021-2024 kumakichi'
+    copyright: '© 2021-2025 kumakichi'
 })
 
 
