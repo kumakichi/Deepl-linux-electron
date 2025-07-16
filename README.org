@@ -62,7 +62,7 @@
 ** build in docker
    #+BEGIN_SRC sh
      # run docker in repo dir
-     docker run -it --rm --name deepl-linux -v $(pwd):/app -w /app --entrypoint /bin/bash node:18
+     docker run -it --rm --name deepl-linux -v $(pwd):/app -w /app --entrypoint /bin/bash node:20
 
      # build
      yarn install
