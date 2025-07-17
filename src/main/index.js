@@ -100,6 +100,11 @@ app.on('ready', function() {
                 store.set('hidden_on_startup', isHiddenOnStartup);
             }
         }, {
+            type: 'separator'
+        }, {
+            label: 'Reload',
+            role: 'reload'
+        }, {
             label: "Quit",
             role: 'quit'
         }]
